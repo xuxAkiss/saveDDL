@@ -386,10 +386,16 @@ export async function apply(ctx, config = {}) {
   function addItem(input) {
     const due = coerceDue(input?.dueAt ?? input?.text ?? input?.title);
     if (!due) {
-      throw new Error('无法识别截止时间。请提供 2026-11-10 23:59、11月10日或「下周五 23:59」。');
+      throw new Error('无法识别截止时间。请提供 2026-11-10（只知道日期即可）、2026-11-10 23:59、11月10日或「下周五 23:59」。');
     }
     const subject = clean(input?.subject, 60) || '未命名课程';
     const assignment = clean(input?.assignment, 40);
+    const dueLabel = clean(input?.dueLabel, 60);
+    const duePrecision = ['datetime', 'date', 'fuzzy'].includes(input?.duePrecision)
+      ? input.duePrecision
+      : dueLabel
+        ? 'fuzzy'
+        : undefined;
     const existing = findItem(subject, assignment, due.toISOString());
     if (existing) return { item: existing, duplicate: true };
 
@@ -400,6 +406,8 @@ export async function apply(ctx, config = {}) {
       assignment,
       title: clean(input?.title, 120) || formatTitle(subject, assignment),
       dueAt: due.toISOString(),
+      duePrecision,
+      dueLabel,
       status: 'todo',
       notes: clean(input?.notes, 1000),
       source: sanitizeSource(input?.source),
@@ -856,7 +864,7 @@ export async function apply(ctx, config = {}) {
     '当用户给出作业 / 论文 / 实验的截止时间，或你刚在工作区写入含 DDL 的文件时，用 action=add 加入。',
     '当用户问「我有哪些 DDL / 作业还有多久 / 这周要交什么」时，用 action=list 查询后再回答。',
     'action=extract 只解析文本、不落库，适合你先从 PDF / Word 提取文字后让用户确认。',
-    'dueAt 支持 ISO（2026-11-10T23:59:00+08:00）或中文（11月10日 23:59、下周五 23:59）；不要编造日期。',
+    'dueAt 支持日期（2026-11-10，自动按当天 23:59）、日期时间（2026-11-10T23:59:00+08:00）或中文（11月10日、下周五）；只知道哪一天就只写日期。模糊时间用 dueLabel + 估计锚点，不要编造精确时刻。',
   ].join('\n');
 
   const ITEM_SCHEMA = {
@@ -867,6 +875,8 @@ export async function apply(ctx, config = {}) {
       assignment: { type: 'string' },
       title: { type: 'string' },
       dueAt: { type: 'string' },
+      duePrecision: { type: 'string', enum: ['datetime', 'date', 'fuzzy'] },
+      dueLabel: { type: 'string' },
       status: { type: 'string', enum: ['todo', 'done'] },
     },
   };
@@ -896,8 +906,14 @@ export async function apply(ctx, config = {}) {
       assignment: { type: 'string', description: '作业编号或名称，例如「HW3」「实验 2」。' },
       dueAt: {
         type: 'string',
-        description: '截止时间，ISO 或中文，例如 2026-11-10T23:59:00+08:00、「11月10日 23:59」、「下周五 23:59」。',
+        description: '截止日期或日期时间，例如 2026-11-10（自动 23:59）、2026-11-10T23:59:00+08:00、「11月10日」、「下周五」。',
       },
+      duePrecision: {
+        type: 'string',
+        enum: ['datetime', 'date', 'fuzzy'],
+        description: '可选精度：date 表示只知道哪一天；fuzzy 表示模糊时间，配合 dueLabel。',
+      },
+      dueLabel: { type: 'string', description: '可选，模糊时间展示文本，例如「12月中旬」。' },
       title: { type: 'string', description: '可选展示标题；省略时自动组合科目与作业编号。' },
       notes: { type: 'string', description: '备注，例如提交方式、链接。' },
       id: { type: 'string', description: 'complete / remove 时的 DDL id。' },
@@ -949,6 +965,8 @@ export async function apply(ctx, config = {}) {
             assignment: item.assignment,
             title: item.title,
             dueAt: item.dueAt,
+            duePrecision: item.duePrecision,
+            dueLabel: item.dueLabel,
             status: item.status,
           }));
         return {

@@ -31,7 +31,7 @@
 
 | 能力 | 状态 |
 | --- | --- |
-| 核心文本解析（时限 / 科目 / 作业编号） | ✅ 已完成，13 核心 + 1 MCP + 7 桌面 = 21 个测试 |
+| 核心文本解析（时限 / 科目 / 作业编号） | ✅ 已完成，13 核心 + 1 MCP + 1 store + 7 桌面 = 22 个测试 |
 | DSH 侧栏「查看 DDL」页面 | ✅ 已完成 |
 | 粘贴通知 → 解析 → 加入清单 | ✅ 已完成 |
 | 扫描工作区 `.md` / `.txt`，右下角询问「是否加入」 | ✅ 已完成 |
@@ -162,9 +162,14 @@ Claude Code、Codex 和 DSH 都支持 **MCP**。仓库自带一个零依赖 MCP 
 ```text
 Claude Code ─┐
 Codex ───────┼── MCP stdio ──► packages/mcp-server ──► packages/store ──► ddls.json
-DSH 插件 ────┘
-CLI / 脚本 ───────────────────────────────────────────────────────────────┘
+CLI / 脚本 ──┘
+
+DSH 插件 ─────── 直接读写 ddls.json（不走 MCP）
 ```
+
+**Codex / Claude Code 不会加载 `plugins/dsh-save-ddl`**；它们只有 MCP server 暴露的 `ddl_*` 工具。DSH 插件的扫描、侧栏和右下角提示只在 DSH 里生效。两边共用数据，但运行层不同。
+
+`dueAt` 可以只写日期（`2026-11-30`，自动按当天 23:59）；模糊时间用 `dueLabel` + 一个提醒锚点，例如 `dueAt: "2026-12-15", duePrecision: "fuzzy", dueLabel: "12月中旬"`。详见 [docs/agent-integration.md](docs/agent-integration.md)。
 
 一键配置（自动写入当前机器的绝对路径）：
 

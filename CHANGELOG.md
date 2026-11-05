@@ -16,7 +16,23 @@
 ### Changed
 
 - `ddls.json` 写入改为「锁文件 + 临时文件 + rename」，并在写回时合并其他进程新加的条目。
-- 测试入口统一为 `node --test`（21 个测试）。
+- 测试入口统一为 `node --test`（22 个测试）。
+
+## Unreleased — 日期精度与模糊时间
+
+### Added
+
+- `ddl_add` 明确支持只写日期：`2026-11-30` / `11月30日` 自动按当天 23:59。
+- 新增 `duePrecision`（`datetime` / `date` / `fuzzy`）与 `dueLabel`。
+- 模糊时间示例：`dueAt: "2026-12-15", duePrecision: "fuzzy", dueLabel: "12月中旬"`；清单显示「约 12月中旬」。
+- MCP schema 增加日期示例，避免 Agent 误以为必须精确到时分。
+- CLI `add` 支持 `--due-label` / `--due-precision`。
+- Electron / DSH 清单按精度显示：date 不显示假时分，fuzzy 显示标签。
+
+### Docs
+
+- 说明 Codex / Claude Code 用的是 **MCP server**，不是 `plugins/dsh-save-ddl`；后者只服务 DSH UI。
+- 说明模糊时间仍需要一个提醒锚点；完全没有日期时先问用户。
 
 ## Unreleased — PDF / Word AI 提取
 

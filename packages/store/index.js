@@ -94,6 +94,26 @@ export function coerceDue(value) {
   return Number.isNaN(fallback.getTime()) ? null : fallback;
 }
 
+const DUE_PRECISIONS = new Set(['datetime', 'date', 'fuzzy']);
+
+/**
+ * 推断截止时间的精度：
+ * - date：只给了哪一天 / 相对某天，默认 23:59
+ * - fuzzy：给了模糊描述（dueLabel），dueAt 是提醒锚点
+ * - datetime：明确到时分
+ */
+export function inferDuePrecision(value, label = '', explicit = '') {
+  if (DUE_PRECISIONS.has(explicit)) return explicit;
+  if (clean(label)) return 'fuzzy';
+  const text = clean(value, 120);
+  if (/^\d{4}[-/]\d{1,2}[-/]\d{1,2}$/u.test(text)) return 'date';
+  if (/^\d{1,2}\s*月\s*\d{1,2}\s*日?$/u.test(text)) return 'date';
+  if (/^(?:今天|明天|后天|大后天|下周[一二三四五六日天]|这周[一二三四五六日天]|周[一二三四五六日天])$/u.test(text)) {
+    return 'date';
+  }
+  return 'datetime';
+}
+
 export class DdlStore {
   /** @param {string} file 绝对路径 */
   constructor(file) {
@@ -189,15 +209,21 @@ export class DdlStore {
   /**
    * 加入一条 DDL。
    * @param {ReturnType<typeof emptyState>} state
-   * @param {{subject?: string, assignment?: string, dueAt?: string, title?: string, notes?: string, source?: object}} input
+   * @param {{subject?: string, assignment?: string, dueAt?: string, duePrecision?: string, dueLabel?: string, title?: string, notes?: string, source?: object}} input
    */
   add(state, input = {}) {
     const due = coerceDue(input.dueAt ?? input.text ?? input.title);
     if (!due) {
-      throw new Error('无法识别截止时间。请提供 2026-11-10 23:59、11月10日或「下周五 23:59」。');
+      throw new Error('无法识别截止时间。请提供 2026-11-10（只知道日期即可）、2026-11-10 23:59、11月10日或「下周五 23:59」。');
     }
     const subject = clean(input.subject, 60) || '未命名课程';
     const assignment = clean(input.assignment, 40);
+    const dueLabel = clean(input.dueLabel, 60);
+    const duePrecision = inferDuePrecision(
+      input.dueAt ?? input.text ?? input.title,
+      dueLabel,
+      input.duePrecision,
+    );
     const dueTime = due.toISOString();
     const duplicate = state.items.find(
       (item) =>
@@ -214,6 +240,8 @@ export class DdlStore {
       assignment,
       title: clean(input.title, 120) || formatTitle(subject, assignment),
       dueAt: dueTime,
+      duePrecision,
+      dueLabel,
       status: 'todo',
       notes: clean(input.notes, 1000),
       source: sanitizeSource(input.source),

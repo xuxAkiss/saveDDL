@@ -74,6 +74,9 @@ test('MCP server exposes the full DDL tool flow', async (t) => {
     tools.result.tools.map((tool) => tool.name),
     ['ddl_list', 'ddl_add', 'ddl_complete', 'ddl_remove', 'ddl_extract'],
   );
+  const addTool = tools.result.tools.find((tool) => tool.name === 'ddl_add');
+  assert.match(addTool.inputSchema.properties.dueAt.description, /只有日期|只知道哪一天/u);
+  assert.ok(addTool.inputSchema.properties.dueAt.examples.includes('2026-11-10'));
 
   const added = await request(3, 'tools/call', {
     name: 'ddl_add',
@@ -114,8 +117,31 @@ test('MCP server exposes the full DDL tool flow', async (t) => {
   });
   assert.match(removed.result.content[0].text, /已删除/u);
 
+  const dateOnly = await request(10, 'tools/call', {
+    name: 'ddl_add',
+    arguments: { subject: '线性代数', assignment: 'HW8', dueAt: '2026-11-30' },
+  });
+  assert.match(dateOnly.result.content[0].text, /线性代数 · HW8（2026\/11\/30）/u);
+
+  const fuzzy = await request(11, 'tools/call', {
+    name: 'ddl_add',
+    arguments: {
+      subject: '大学物理',
+      assignment: '实验报告',
+      dueAt: '2026-12-15',
+      duePrecision: 'fuzzy',
+      dueLabel: '12月中旬',
+    },
+  });
+  assert.match(fuzzy.result.content[0].text, /约 12月中旬/u);
+
   const saved = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
-  assert.equal(saved.items.length, 0);
+  assert.equal(saved.items.length, 2);
+  const dateItem = saved.items.find((item) => item.assignment === 'HW8');
+  assert.equal(dateItem.duePrecision, 'date');
+  const fuzzyItem = saved.items.find((item) => item.assignment === '实验报告');
+  assert.equal(fuzzyItem.duePrecision, 'fuzzy');
+  assert.equal(fuzzyItem.dueLabel, '12月中旬');
 
   child.stdin.end();
   await new Promise((resolve) => child.once('exit', resolve));

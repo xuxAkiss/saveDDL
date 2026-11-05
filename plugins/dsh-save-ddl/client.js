@@ -196,6 +196,14 @@ window.__ModuleLoader__.load({
       }
     }
 
+    function formatItemDue(item, locale) {
+      if (item.duePrecision === 'date') {
+        return formatDue(item.dueAt, locale).replace(/\s+\d{2}:\d{2}$/u, '');
+      }
+      if (item.duePrecision === 'fuzzy' && item.dueLabel) return `约 ${item.dueLabel}`;
+      return formatDue(item.dueAt, locale);
+    }
+
     function relativeLabel(t, diff, done) {
       if (done) return '';
       if (diff < 0) return fmt(t('relative.overdue'), { n: -diff });
@@ -642,7 +650,7 @@ window.__ModuleLoader__.load({
                 ? h(
                     'span',
                     { className: 'sdl-chip' },
-                    `${t('page.next')} · ${formatDue(next.dueAt, locale)}`,
+                    `${t('page.next')} · ${formatItemDue(next, locale)}`,
                   )
                 : null,
               snapshot.scanning ? h('span', { className: 'sdl-chip' }, t('toolbar.refreshing')) : null,
@@ -849,7 +857,7 @@ window.__ModuleLoader__.load({
             h(
               'span',
               { className: `sdl-due${overdue ? ' sdl-due-overdue' : soon ? ' sdl-due-soon' : ''}` },
-              `${t('item.due')} ${formatDue(item.dueAt, locale)}`,
+              `${t('item.due')} ${formatItemDue(item, locale)}`,
             ),
             relative
               ? h(

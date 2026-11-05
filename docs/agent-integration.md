@@ -8,10 +8,12 @@ Claude Code、Codex 和 DeepSeek Harness 都支持 **MCP（Model Context Protoco
 ```text
 Claude Code ─┐
 Codex ───────┼── MCP stdio ──► packages/mcp-server ──► packages/store ──► ddls.json
-DSH 插件 ────┘                         ▲
-CLI / 脚本 ────────────────────────────┘
+CLI / 脚本 ──┘
+
+DSH 插件 ─────── 直接读写 ddls.json（不走 MCP）
 ```
 
+- **Codex / Claude Code 不会加载 `plugins/dsh-save-ddl`**；它们只拿到 MCP server 暴露的 5 个工具。DSH 插件是 DSH 侧栏 / 工作区扫描 / 右下角提示那一层，Codex 里没有这些 UI。
 - MCP server 是**零依赖**的 Node 脚本，不联网。
 - 三个入口共用同一份 `ddls.json`：
   - DSH 插件：`$DSH_HOME/save-ddl/ddls.json`
@@ -24,12 +26,34 @@ CLI / 脚本 ──────────────────────�
 | 工具 | 作用 | 关键参数 |
 | --- | --- | --- |
 | `ddl_list` | 查询清单 | `includeDone?` |
-| `ddl_add` | 加入一条 DDL | `subject`, `dueAt`, `assignment?`, `title?`, `notes?` |
+| `ddl_add` | 加入一条 DDL | `subject`, `dueAt`, `assignment?`, `duePrecision?`, `dueLabel?`, `title?`, `notes?` |
 | `ddl_complete` | 标记完成 | `id` |
 | `ddl_remove` | 删除 | `id` |
 | `ddl_extract` | 只解析文本、不落库 | `text` |
 
 工具描述里明确写了：「日期不明确时先问用户，不要编造截止时间。」
+
+### 日期精度与模糊时间
+
+- **只知道哪一天**：`dueAt: "2026-11-30"` 或 `"11月30日"`，自动按当天 **23:59**；`ddl_list` 只显示日期，不显示假时分。
+- **明确到时分**：`dueAt: "2026-11-30T18:00:00+08:00"`。
+- **模糊时间**：仍给一个提醒锚点，再用 `dueLabel` 展示原文：
+
+  ```json
+  {
+    "subject": "大学物理",
+    "assignment": "实验报告",
+    "dueAt": "2026-12-15",
+    "duePrecision": "fuzzy",
+    "dueLabel": "12月中旬"
+  }
+  ```
+
+  - 通知 / 排序用 `dueAt` 锚点。
+  - 清单显示「约 12月中旬」。
+  - **完全没有日期**时不要编造；先问用户，或先加入并在 `notes` 里写「待定」。
+
+Codex / Claude Code 如果看不到 `duePrecision` / `dueLabel`，说明当前 MCP 进程还是旧版本；**重启 Codex / 重连 MCP** 后再试。
 
 ## 一键配置
 

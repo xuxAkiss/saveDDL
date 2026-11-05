@@ -44,9 +44,17 @@ if (dataFile) process.env.SAVE_DDL_DATA = dataFile;
 const store = new DdlStore(resolveDataFile());
 const command = argv.shift() ?? 'help';
 
+function formatItemDue(item) {
+  if (item.duePrecision === 'date') {
+    return formatDue(item.dueAt, 'zh').replace(/\s+\d{2}:\d{2}$/u, '');
+  }
+  if (item.duePrecision === 'fuzzy' && item.dueLabel) return `约 ${item.dueLabel}`;
+  return formatDue(item.dueAt, 'zh');
+}
+
 function line(item) {
   const done = item.status === 'done';
-  return `- ${done ? '[x]' : '[ ]'} ${formatDue(item.dueAt, 'zh')} · ${item.title}（id: ${item.id}）`;
+  return `- ${done ? '[x]' : '[ ]'} ${formatItemDue(item)} · ${item.title}（id: ${item.id}）`;
 }
 
 function printHelp() {
@@ -54,7 +62,7 @@ function printHelp() {
 
 用法：
   save-ddl list [--all] [--json]
-  save-ddl add --subject <科目> --due <时间> [--assignment <编号>] [--title <标题>] [--notes <备注>]
+  save-ddl add --subject <科目> --due <日期或时间> [--assignment <编号>] [--due-label <模糊时间>] [--due-precision date|fuzzy|datetime] [--title <标题>] [--notes <备注>]
   save-ddl add-text "<原文>"
   save-ddl done <id>
   save-ddl remove <id>
@@ -101,16 +109,27 @@ async function main() {
     const assignment = takeFlag('assignment');
     const title = takeFlag('title');
     const notes = takeFlag('notes');
+    const dueLabel = takeFlag('due-label');
+    const duePrecision = takeFlag('due-precision');
     if (!subject || !due) {
       throw new Error('add 需要 --subject 和 --due');
     }
     const result = await store.update((state) =>
-      store.add(state, { subject, assignment, dueAt: due, title, notes, source: { kind: 'manual' } }),
+      store.add(state, {
+        subject,
+        assignment,
+        dueAt: due,
+        dueLabel,
+        duePrecision,
+        title,
+        notes,
+        source: { kind: 'manual' },
+      }),
     );
     console.log(
       result.duplicate
-        ? `已存在：${result.item.title}（${formatDue(result.item.dueAt, 'zh')}）`
-        : `已加入：${result.item.title}（${formatDue(result.item.dueAt, 'zh')}）（id: ${result.item.id}）`,
+        ? `已存在：${result.item.title}（${formatItemDue(result.item)}）`
+        : `已加入：${result.item.title}（${formatItemDue(result.item)}）（id: ${result.item.id}）`,
     );
     return;
   }

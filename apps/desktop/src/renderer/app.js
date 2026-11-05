@@ -74,6 +74,14 @@ function formatDue(value) {
   return new Intl.DateTimeFormat('zh-CN', options).format(date);
 }
 
+function formatItemDue(item) {
+  if (item.duePrecision === 'date') {
+    return formatDue(item.dueAt).replace(/\s+\d{2}:\d{2}$/u, '');
+  }
+  if (item.duePrecision === 'fuzzy' && item.dueLabel) return `约 ${item.dueLabel}`;
+  return formatDue(item.dueAt);
+}
+
 function relativeLabel(diff, done) {
   if (done) return '';
   if (diff < 0) return `逾期 ${-diff} 天`;
@@ -137,7 +145,7 @@ function itemRow(item) {
     el(
       'span',
       { class: `ddl-due${overdue ? ' overdue' : soon ? ' soon' : ''}` },
-      `截止 ${formatDue(item.dueAt)}`,
+      `截止 ${formatItemDue(item)}`,
     ),
     relative
       ? el('span', { class: `relative${overdue ? ' overdue' : ''}` }, relative)
@@ -181,7 +189,7 @@ function renderStats() {
     stats.append(el('span', { class: 'chip chip-danger' }, `${overdue.length} 条逾期`));
   }
   if (next) {
-    stats.append(el('span', { class: 'chip' }, `下一次截止 · ${formatDue(next.dueAt)}`));
+    stats.append(el('span', { class: 'chip' }, `下一次截止 · ${formatItemDue(next)}`));
   }
   if (state.settings?.pausedUntil && state.settings.pausedUntil > now.getTime()) {
     stats.append(el('span', { class: 'chip' }, '提醒已暂停'));

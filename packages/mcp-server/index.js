@@ -41,14 +41,28 @@ const TOOLS = [
   {
     name: 'ddl_add',
     description:
-      '把一条作业 / 实验 / 论文的截止时间加入清单。dueAt 支持 ISO（2026-11-10T23:59:00+08:00）或中文（11月10日 23:59、下周五 23:59）。不要编造日期。',
+      '把一条作业 / 实验 / 论文的截止时间加入清单。dueAt 支持日期（2026-11-10，自动按当天 23:59）、日期时间（2026-11-10T23:59:00+08:00）或中文（11月10日、下周五）。只知道哪一天就只写日期；模糊时间用 dueLabel + 估计锚点，不要编造精确时刻。',
     inputSchema: {
       type: 'object',
       additionalProperties: false,
       properties: {
         subject: { type: 'string', description: '科目 / 课程名，例如「高等数学」。' },
         assignment: { type: 'string', description: '作业编号或名称，例如「HW3」「实验 2」。' },
-        dueAt: { type: 'string', description: '截止时间，ISO 或中文。' },
+        dueAt: {
+          type: 'string',
+          description:
+            '截止日期或日期时间。只有日期时自动按当天 23:59；例如 2026-11-10、2026-11-10T23:59:00+08:00、11月10日、下周五。',
+          examples: ['2026-11-10', '2026-11-10T23:59:00+08:00', '11月10日', '下周五'],
+        },
+        duePrecision: {
+          type: 'string',
+          enum: ['datetime', 'date', 'fuzzy'],
+          description: '可选精度：date 表示只知道哪一天；fuzzy 表示模糊时间，配合 dueLabel。',
+        },
+        dueLabel: {
+          type: 'string',
+          description: '可选，模糊时间的展示文本，例如「11月中旬」「老师另行通知」。dueAt 仍需填一个估计的提醒锚点。',
+        },
         title: { type: 'string', description: '可选展示标题；省略时自动组合科目与作业编号。' },
         notes: { type: 'string', description: '备注，例如提交方式、链接。' },
       },
@@ -88,9 +102,17 @@ const TOOLS = [
   },
 ];
 
+function formatItemDue(item) {
+  if (item.duePrecision === 'date') {
+    return formatDue(item.dueAt, 'zh').replace(/\s+\d{2}:\d{2}$/u, '');
+  }
+  if (item.duePrecision === 'fuzzy' && item.dueLabel) return `约 ${item.dueLabel}`;
+  return formatDue(item.dueAt, 'zh');
+}
+
 function formatItem(item) {
   const done = item.status === 'done';
-  return `- ${done ? '[x]' : '[ ]'} ${formatDue(item.dueAt, 'zh')} · ${item.title}（id: ${item.id}）`;
+  return `- ${done ? '[x]' : '[ ]'} ${formatItemDue(item)} · ${item.title}（id: ${item.id}）`;
 }
 
 function textResult(text, isError = false) {
@@ -115,8 +137,8 @@ async function callTool(name, args = {}) {
     );
     return textResult(
       result.duplicate
-        ? `已存在：${result.item.title}（${formatDue(result.item.dueAt, 'zh')}）`
-        : `已加入：${result.item.title}（${formatDue(result.item.dueAt, 'zh')}）`,
+        ? `已存在：${result.item.title}（${formatItemDue(result.item)}）`
+        : `已加入：${result.item.title}（${formatItemDue(result.item)}）`,
     );
   }
 
