@@ -55,6 +55,36 @@ DSH 插件 ─────── 直接读写 ddls.json（不走 MCP）
 
 Codex / Claude Code 如果看不到 `duePrecision` / `dueLabel`，说明当前 MCP 进程还是旧版本；**重启 Codex / 重连 MCP** 后再试。
 
+### 在 Codex 里怎么说
+
+```text
+把线性代数 HW8 加进 DDL，11 月 30 日截止。
+```
+
+Codex 应该调用：
+
+```json
+{ "subject": "线性代数", "assignment": "HW8", "dueAt": "2026-11-30" }
+```
+
+```text
+把大学物理实验报告加进 DDL，大概 12 月中旬，按 12 月 15 日提醒。
+```
+
+Codex 应该调用：
+
+```json
+{
+  "subject": "大学物理",
+  "assignment": "实验报告",
+  "dueAt": "2026-12-15",
+  "duePrecision": "fuzzy",
+  "dueLabel": "12月中旬"
+}
+```
+
+不要为了让工具接受而编一个精确时刻；**只写日期也可以**，系统会按当天 23:59 处理。只有日期时，清单也只显示日期，不显示假的 `23:59`。
+
 ## 一键配置
 
 ```bash
