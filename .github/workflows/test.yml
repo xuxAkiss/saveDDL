@@ -1,0 +1,53 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run all tests
+        run: node --test
+
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check JavaScript syntax
+        run: |
+          node --check packages/core/src/ddl.js
+          node --check packages/store/index.js
+          node --check packages/mcp-server/index.js
+          node --check packages/cli/index.js
+          node --check scripts/setup-agents.mjs
+          node --check apps/desktop/src/main.js
+          node --check apps/desktop/src/preload.cjs
+          node --check apps/desktop/src/renderer/app.js
+          node --check apps/desktop/src/lib/notifier.js
+          node --check apps/desktop/src/lib/registry.js
+          node --check apps/desktop/src/lib/ics.js
+          node --check apps/desktop/src/lib/bridge.js
+          node --check apps/desktop/src/lib/extract.js
+          node --check apps/desktop/src/lib/ai.js
+          node --check apps/desktop/src/lib/ocr.js
+          node --check apps/desktop/dist/extract.cjs
+          node --check apps/desktop/scripts/start.mjs
+          node --check apps/desktop/scripts/fetch-electron.mjs
+          node --check apps/extension/background.js
+          node --check apps/extension/popup.js
+          node --check apps/extension/options.js
+          node --check plugins/dsh-save-ddl/index.js
+          node --check plugins/dsh-save-ddl/client.js
+          node --check plugins/dsh-save-ddl/lib/core.js
+      - name: Validate JSON manifests and locales
+        run: |
+          node -e "for (const f of ['package.json','packages/core/package.json','packages/store/package.json','packages/mcp-server/package.json','packages/cli/package.json','apps/desktop/package.json','apps/extension/manifest.json','plugins/dsh-save-ddl/package.json','plugins/dsh-save-ddl/locale/zh.json','plugins/dsh-save-ddl/locale/en.json']) JSON.parse(require('fs').readFileSync(f,'utf8')); console.log('json ok')"

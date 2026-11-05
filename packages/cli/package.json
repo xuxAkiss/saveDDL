@@ -1,0 +1,14 @@
+{
+  "name": "@save-ddl/cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "拯救 DDL 的命令行工具，供 Agent 或脚本调用。",
+  "bin": {
+    "save-ddl": "./index.js"
+  },
+  "exports": {
+    ".": "./index.js"
+  },
+  "license": "MIT"
+}

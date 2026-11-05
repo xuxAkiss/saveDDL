@@ -1,0 +1,23 @@
+node_modules/
+dist/
+!apps/desktop/dist/
+!apps/desktop/dist/extract.cjs
+out/
+release/
+coverage/
+*.log
+.DS_Store
+Thumbs.db
+_tmp/
+.env
+.env.*
+!.env.example
+
+# 本地生成 / 打包产物
+generated/
+*.tsbuildinfo
+
+# Electron 运行时（体积大，按需下载）
+apps/desktop/vendor/
+apps/desktop/electron.log
+apps/extension/*.log

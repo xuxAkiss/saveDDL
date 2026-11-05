@@ -1,0 +1,297 @@
+:root {
+  --bg: #f4f6fb;
+  --panel: #ffffff;
+  --panel-2: #f7f9fd;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  --brand: #2563eb;
+  --brand-strong: #1d4ed8;
+  --danger: #dc2626;
+  --success: #16a34a;
+  --warn: #d97706;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --panel-2: #1d212a;
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+    --border: #2a2f3a;
+    --border-strong: #3a4150;
+    --brand: #60a5fa;
+    --brand-strong: #3b82f6;
+    --danger: #f87171;
+    --success: #4ade80;
+    --warn: #fbbf24;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  width: 360px;
+  min-height: 420px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 420px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 14px 10px;
+}
+
+.icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.22);
+}
+
+.head-text {
+  min-width: 0;
+  flex: 1;
+}
+
+h1 {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--border-strong);
+  flex: none;
+}
+
+.dot.ok {
+  background: var(--success);
+}
+
+.dot.offline {
+  background: var(--danger);
+}
+
+.icon-btn {
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  border-radius: 7px;
+  width: 28px;
+  height: 28px;
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.icon-btn:hover {
+  background: var(--panel-2);
+  color: var(--text);
+}
+
+.pending {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 14px 8px;
+  padding: 7px 9px;
+  border: 1px solid var(--warn);
+  border-radius: 8px;
+  color: var(--warn);
+  background: var(--panel);
+  font-size: 11px;
+}
+
+.items {
+  padding: 0 14px;
+  flex: 1;
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.item:last-child {
+  border-bottom: 0;
+}
+
+.item .mark {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--brand);
+  margin-top: 6px;
+  flex: none;
+}
+
+.item .mark.done {
+  background: var(--success);
+}
+
+.item .mark.overdue {
+  background: var(--danger);
+}
+
+.item-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.item-title {
+  font-size: 12px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.item-meta {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.empty {
+  color: var(--muted);
+  text-align: center;
+  padding: 16px 0;
+  font-size: 12px;
+}
+
+.add {
+  padding: 10px 14px 6px;
+  border-top: 1px solid var(--border);
+}
+
+textarea {
+  width: 100%;
+  min-height: 64px;
+  resize: vertical;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+textarea::placeholder {
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--brand);
+}
+
+.add-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 7px;
+}
+
+button {
+  font: inherit;
+}
+
+.primary {
+  appearance: none;
+  border: 1px solid var(--brand);
+  background: var(--brand);
+  color: #fff;
+  border-radius: 8px;
+  padding: 6px 11px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.primary:hover {
+  background: var(--brand-strong);
+}
+
+.primary:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.link {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--brand);
+  cursor: pointer;
+  padding: 0;
+  font-size: 11px;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.message {
+  font-size: 11px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.message.error {
+  color: var(--danger);
+}
+
+.message.ok {
+  color: var(--success);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px 12px;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 11px;
+}

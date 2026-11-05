@@ -1,0 +1,9 @@
+- insert:
+    - id: save-ddl
+      name: '@local/save-ddl'
+      config:
+        scanIntervalMs: 45000
+        maxDepth: 3
+        maxFilesPerRoot: 240
+        maxFileBytes: 262144
+        maxAgeDays: 45

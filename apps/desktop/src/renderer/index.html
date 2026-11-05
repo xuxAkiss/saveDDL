@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>拯救 DDL</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="header">
+        <div class="brand">
+          <img class="brand-icon" src="../../assets/icon.png" alt="" />
+          <div>
+            <h1>拯救 DDL</h1>
+            <p>把散落在通知、群聊和文档里的截止时间，收进一个清单。</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="export" class="btn" type="button">导出日历</button>
+          <button id="settings-toggle" class="btn btn-ghost" type="button">设置</button>
+        </div>
+      </header>
+
+      <section id="stats" class="stats" aria-label="统计"></section>
+
+      <form id="add-form" class="card add-card">
+        <div class="add-head">
+          <div class="add-title">粘贴一条通知</div>
+          <div class="hint">支持「时限：2026-11-10 23:59 科目：高等数学 作业编号：HW3」；Ctrl+Enter 快速加入。</div>
+        </div>
+        <textarea
+          id="add-text"
+          class="textarea"
+          rows="3"
+          placeholder="例：时限：2026-11-10 23:59 科目：高等数学 作业编号：HW3"
+        ></textarea>
+        <div class="add-foot">
+          <button id="add-button" class="btn btn-primary" type="submit">解析并加入</button>
+          <button id="import-document" class="btn" type="button">导入文档</button>
+          <span id="add-message" class="message" role="status"></span>
+        </div>
+      </form>
+
+      <nav id="tabs" class="tabs" aria-label="筛选">
+        <button class="tab" type="button" data-filter="todo" aria-selected="true">待办</button>
+        <button class="tab" type="button" data-filter="done" aria-selected="false">已完成</button>
+        <button class="tab" type="button" data-filter="all" aria-selected="false">全部</button>
+      </nav>
+
+      <main id="list" class="list" aria-live="polite"></main>
+      <div id="empty" class="empty" hidden>
+        <div class="empty-title">还没有 DDL</div>
+        <div class="empty-body">把课程群里的通知粘贴到上面，或按 Ctrl+Alt+D 从剪贴板加入。</div>
+      </div>
+    </div>
+
+    <div id="backdrop" class="backdrop" hidden></div>
+    <aside id="settings" class="settings" aria-label="设置" hidden>
+      <div class="settings-head">
+        <h2>设置</h2>
+        <button id="settings-close" class="icon-btn" type="button" aria-label="关闭">×</button>
+      </div>
+
+      <section class="settings-group">
+        <h3>系统集成</h3>
+        <label class="check-row">
+          <input id="autostart" type="checkbox" />
+          <span>开机自启</span>
+        </label>
+        <p class="settings-hint">登录 Windows 后自动启动托盘，不打开主窗口。</p>
+        <button id="context-menu" class="btn btn-block" type="button">安装资源管理器右键菜单</button>
+        <p id="context-menu-hint" class="settings-hint"></p>
+      </section>
+
+      <section class="settings-group">
+        <h3>AI 提取（PDF / Word）</h3>
+        <label class="field">
+          <span>Base URL</span>
+          <input id="ai-base" type="url" placeholder="https://api.deepseek.com/v1" />
+        </label>
+        <label class="field">
+          <span>模型</span>
+          <input id="ai-model" type="text" placeholder="deepseek-chat" />
+        </label>
+        <label class="field">
+          <span>API Key</span>
+          <input id="ai-key" type="password" placeholder="已保存，留空不修改" autocomplete="off" />
+        </label>
+        <div class="settings-actions">
+          <button id="ai-save" class="btn" type="button">保存</button>
+          <button id="ai-test" class="btn" type="button">测试连接</button>
+          <button id="ai-clear" class="btn btn-ghost" type="button">清除 Key</button>
+        </div>
+        <p id="ai-hint" class="settings-hint"></p>
+      </section>
+
+      <section class="settings-group">
+        <h3>快捷键</h3>
+        <div class="key-row"><kbd>Ctrl</kbd><span>+</span><kbd>Alt</kbd><span>+</span><kbd>D</kbd><span class="settings-hint">从剪贴板识别并加入</span></div>
+      </section>
+
+      <section class="settings-group">
+        <h3>数据</h3>
+        <p class="settings-hint">与 DSH、Claude Code、Codex、CLI 共用同一份文件：</p>
+        <code id="data-file" class="code"></code>
+        <p id="version" class="settings-hint"></p>
+      </section>
+    </aside>
+
+    <div id="toast" class="toast" role="status" hidden></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

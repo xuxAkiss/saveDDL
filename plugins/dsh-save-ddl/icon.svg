@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="拯救 DDL">
+  <defs>
+    <linearGradient id="save-ddl-brand" x1="8" y1="4" x2="56" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#1D4ED8"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#save-ddl-brand)"/>
+  <circle cx="32" cy="34" r="16" fill="none" stroke="#FFFFFF" stroke-width="4" opacity="0.96"/>
+  <path d="M32 23.5v10.8l7.2 4.4" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M21 12.5h22" fill="none" stroke="#BFDBFE" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="47" cy="47" r="8" fill="#22C55E"/>
+  <path d="m43.6 47.1 2.2 2.2 4.1-4.6" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

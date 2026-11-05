@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>拯救 DDL 设置</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main class="card">
+      <div class="head">
+        <img src="icons/icon48.png" alt="" />
+        <div>
+          <h1>拯救 DDL 设置</h1>
+          <p>扩展需要桌面端保持运行；数据由桌面端写入共享的 ddls.json。</p>
+        </div>
+      </div>
+
+      <label class="field">
+        <span>桌面端端口</span>
+        <input id="port" type="number" min="1" max="65535" placeholder="17893" />
+      </label>
+      <p class="hint">默认 17893；扩展会自动尝试 17893–17903。</p>
+
+      <label class="field">
+        <span>本地 Token</span>
+        <input id="token" type="text" placeholder="save-ddl-local-v1" />
+      </label>
+      <p class="hint">默认 save-ddl-local-v1，与桌面端保持一致。</p>
+
+      <div class="actions">
+        <button id="test" class="secondary" type="button">测试连接</button>
+        <button id="save" class="primary" type="button">保存</button>
+      </div>
+      <p id="status" class="status"></p>
+
+      <div class="footer">
+        <span>桌面端未启动时，选中的文字会暂存在扩展里，每分钟自动重试。</span>
+      </div>
+    </main>
+    <script src="options.js"></script>
+  </body>
+</html>

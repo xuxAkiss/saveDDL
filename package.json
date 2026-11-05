@@ -1,0 +1,20 @@
+{
+  "name": "save-ddl",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "拯救 DDL：面向大学生的截止时间收集、提醒与查看工具。",
+  "scripts": {
+    "test": "node --test",
+    "sync:core": "node scripts/sync-core.mjs",
+    "mcp": "node packages/mcp-server/index.js",
+    "cli": "node packages/cli/index.js",
+    "desktop": "node apps/desktop/scripts/start.mjs",
+    "desktop:fetch": "node apps/desktop/scripts/fetch-electron.mjs",
+    "setup:agents": "node scripts/setup-agents.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

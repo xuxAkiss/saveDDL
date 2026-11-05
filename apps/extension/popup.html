@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>拯救 DDL</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <img class="icon" src="icons/icon48.png" alt="" />
+        <div class="head-text">
+          <h1>拯救 DDL</h1>
+          <p id="status" class="status"><span id="dot" class="dot"></span><span id="status-text">检查连接…</span></p>
+        </div>
+        <button id="settings" class="icon-btn" type="button" title="设置" aria-label="设置">⚙</button>
+      </header>
+
+      <div id="pending" class="pending" hidden>
+        <span id="pending-text"></span>
+        <button id="retry" class="link" type="button">重试</button>
+      </div>
+
+      <section id="items" class="items" aria-live="polite"></section>
+
+      <form id="add-form" class="add">
+        <textarea
+          id="add-text"
+          rows="3"
+          placeholder="粘贴通知，例如：时限：2026-11-10 23:59 科目：高等数学 作业编号：HW3"
+        ></textarea>
+        <div class="add-row">
+          <button id="add-button" class="primary" type="submit">解析并加入</button>
+          <span id="message" class="message"></span>
+        </div>
+      </form>
+
+      <footer class="footer">
+        <button id="open-desktop" class="link" type="button">打开桌面端</button>
+        <span class="muted">v0.1.0</span>
+      </footer>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>

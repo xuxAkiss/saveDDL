@@ -1,0 +1,17 @@
+{
+  "name": "@save-ddl/core",
+  "version": "0.1.0",
+  "description": "拯救 DDL 的核心文本解析器：从通知、Markdown、聊天记录中提取时限、科目、作业编号。",
+  "type": "module",
+  "main": "./src/ddl.js",
+  "exports": {
+    ".": "./src/ddl.js"
+  },
+  "files": [
+    "src/ddl.js"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "license": "MIT"
+}

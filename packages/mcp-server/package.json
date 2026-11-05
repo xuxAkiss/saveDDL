@@ -1,0 +1,14 @@
+{
+  "name": "@save-ddl/mcp-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "拯救 DDL 的 MCP stdio server，供 Claude Code / Codex 等 Agent 使用。",
+  "bin": {
+    "save-ddl-mcp": "./index.js"
+  },
+  "exports": {
+    ".": "./index.js"
+  },
+  "license": "MIT"
+}
