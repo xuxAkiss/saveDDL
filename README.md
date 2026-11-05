@@ -5,7 +5,12 @@
 
 面向大学生的开源 DDL（Deadline）收集与提醒工具。目标形态是 **「右键 / 快捷键随手收集 → 系统托盘与通知栏集中查看 → 导出日历」**。本仓库当前交付 **DSH 插件 + 零依赖 MCP server / CLI**，以及一个不依赖运行时、可被后续 Electron 桌面端和浏览器扩展复用的核心解析器。
 
-![DSH 插件截图](docs/screenshot-prompt.png)
+[![test](https://github.com/xuxAkiss/saveDDL/actions/workflows/test.yml/badge.svg)](https://github.com/xuxAkiss/saveDDL/actions/workflows/test.yml)
+[![release](https://img.shields.io/github/v/release/xuxAkiss/saveDDL)](https://github.com/xuxAkiss/saveDDL/releases)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![platform](https://img.shields.io/badge/platform-Windows-0078D4.svg)](#)
+
+![Save DDL](docs/social-preview.png)
 
 ## 快速开始
 
@@ -359,6 +364,7 @@ save-ddl/
 │  ├─ desktop.png
 │  ├─ extension.png
 │  ├─ ai-settings.png
+│  ├─ social-preview.png
 │  ├─ screenshot-prompt.png
 │  └─ screenshot.png
 ├─ scripts/
@@ -371,6 +377,8 @@ save-ddl/
 ```
 
 ## DSH 插件实现
+
+![DSH 插件截图](docs/screenshot-prompt.png)
 
 ### Host 半（`index.js`）
 

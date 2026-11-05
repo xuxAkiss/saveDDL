@@ -4,6 +4,15 @@
   "private": true,
   "type": "module",
   "description": "拯救 DDL：面向大学生的截止时间收集、提醒与查看工具。",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xuxAkiss/saveDDL.git"
+  },
+  "homepage": "https://github.com/xuxAkiss/saveDDL#readme",
+  "bugs": {
+    "url": "https://github.com/xuxAkiss/saveDDL/issues"
+  },
+  "author": "Save DDL contributors",
   "scripts": {
     "test": "node --test",
     "sync:core": "node scripts/sync-core.mjs",
