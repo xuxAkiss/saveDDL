@@ -83,7 +83,7 @@ export function coerceDue(value) {
   }
 
   if (/^\d{4}-\d{2}-\d{2}[T ]\d{1,2}:\d{2}/u.test(text)) {
-    const date = new Date(text.replace(' ', 'T'));
+    const date = new Date(text.replace(/\b24:00(?::00)?\b/u, '23:59').replace(' ', 'T'));
     if (!Number.isNaN(date.getTime())) return date;
   }
 

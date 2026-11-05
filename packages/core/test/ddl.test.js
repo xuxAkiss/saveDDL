@@ -180,6 +180,32 @@ test('OCR 页眉重复的课程名会折叠', () => {
   assert.equal(candidate.assignment, '实验 二');
 });
 
+test('24:00 按当天 23:59，且不把布置周当截止', () => {
+  const text = [
+    '实践项目P2：Profiling Serial Merge Sort',
+    '',
+    '布置周：2026 年 10 月 21 日 9:50',
+    '',
+    '提交周：2026 年 11 月 18 日 24:00',
+    '',
+    '助教：余俊 51285903106@stu.ecnu.edu.cn',
+  ].join('\n');
+
+  const candidates = extractCandidates(text, {
+    now: NOW,
+    sourceName: 'P2 Profiling Serial Merge Sort.docx',
+  });
+  assert.equal(candidates.length, 1);
+  assert.equal(candidates[0].subject, 'P2 Profiling Serial Merge Sort');
+  assert.deepEqual(localParts(candidates[0].dueAt), {
+    year: 2026,
+    month: 11,
+    day: 18,
+    hour: 23,
+    minute: 59,
+  });
+});
+
 test('normalizeText 只做全角转半角', () => {
   assert.equal(normalizeText('ＡＢＣ：１２３'), 'ABC:123');
   assert.equal(normalizeText('保持中文'), '保持中文');

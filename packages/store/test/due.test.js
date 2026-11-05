@@ -18,6 +18,14 @@ test('date-only and fuzzy deadlines are stored without losing precision', async 
   assert.equal(date.getHours(), 23);
   assert.equal(date.getMinutes(), 59);
 
+  const midnight = coerceDue('2026-11-18 24:00');
+  assert.ok(midnight);
+  assert.equal(midnight.getFullYear(), 2026);
+  assert.equal(midnight.getMonth(), 10);
+  assert.equal(midnight.getDate(), 18);
+  assert.equal(midnight.getHours(), 23);
+  assert.equal(midnight.getMinutes(), 59);
+
   assert.equal(inferDuePrecision('2026-11-10'), 'date');
   assert.equal(inferDuePrecision('11月10日'), 'date');
   assert.equal(inferDuePrecision('2026-11-10 23:59'), 'datetime');

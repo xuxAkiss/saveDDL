@@ -36,6 +36,9 @@ export const DDL_KEYWORD =
 const DUE_LABEL =
   /(?:截止(?:时间|日期)?|时限|提交(?:时间|截止时间|截止)?|ddl|deadline|due(?:\s*date)?)/iu;
 
+/** 发布时间 / 布置时间不是截止时间，没有截止标签时跳过。 */
+const ANNOUNCEMENT_LABEL = /(?:布置|发布|公布|开始|开放|下发)/u;
+
 /** 字段标签的完整集合，用于让「科目：」在下一个标签处停下。 */
 const FIELD_LABELS = [
   '时限',
@@ -121,8 +124,13 @@ function matchAll(text, pattern) {
  * @returns {Date | null}
  */
 function makeDate(year, month, day, hour, minute) {
-  const hh = hour ?? 23;
-  const mm = minute ?? 59;
+  let hh = hour ?? 23;
+  let mm = minute ?? 59;
+  // 中文通知常用「11 月 18 日 24:00」表示当天结束，按 23:59 处理。
+  if (hh === 24 && mm === 0) {
+    hh = 23;
+    mm = 59;
+  }
   if (![year, month, day, hh, mm].every(Number.isFinite)) return null;
   if (month < 1 || month > 12 || day < 1 || day > 31) return null;
   if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return null;
@@ -173,6 +181,7 @@ function timeNear(text, start, end) {
     if (!match) continue;
     const hour = Number(match[1]);
     const minute = Number(match[2]);
+    if (hour === 24 && minute === 0) return { hour: 23, minute: 59 };
     if (hour <= 23 && minute <= 59) return { hour, minute };
   }
   return undefined;
@@ -560,6 +569,9 @@ export function extractCandidates(text, options = {}) {
     });
 
     if (anchors.length === 0) {
+      // 「布置周 / 发布日期」这类段落只是发布时间，不是 DDL；
+      // 没有截止标签时不要把段落里的日期当成截止时间。
+      if (ANNOUNCEMENT_LABEL.test(paragraph) && !DUE_LABEL.test(paragraph)) continue;
       const due = parseDue(paragraph, now);
       if (!due) continue;
       const subject = labelValue(paragraph, '科目|课程|学科|课名|subject|course') || inferSubject(paragraph, sourceName);
